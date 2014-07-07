@@ -211,8 +211,7 @@ namespace BasicForm
 
             return error;
 
-        }
-        
+        }        
 
         private Boolean ValidateName()
         {

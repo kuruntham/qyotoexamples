@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Data;
+using System.Data.SQLite;
+using System.Data.SQLite.Linq;
+
 using QtCore;
 using QtGui;
 
@@ -26,18 +30,15 @@ namespace TableWidget
             
             QVBoxLayout vBox = new QVBoxLayout(this);
             tableWidget = new QTableWidget();
-            
-            QTableWidgetItem codeHeader = new QTableWidgetItem();
-            codeHeader.Text = "Code";
+         
+            tableWidget.ColumnCount = 3;
+            tableWidget.SetHorizontalHeaderItem(0, new QTableWidgetItem("Code"));
+            tableWidget.SetHorizontalHeaderItem(1, new QTableWidgetItem("Product"));
+            tableWidget.SetHorizontalHeaderItem(2, new QTableWidgetItem("Id"));
+            tableWidget.SetColumnHidden(2, true);
 
-            QTableWidgetItem nameHeader = new QTableWidgetItem();
-            nameHeader.Text = "Product ";
-            
-            tableWidget.ColumnCount = 2;
-            tableWidget.SetHorizontalHeaderItem(0, codeHeader);
-            tableWidget.SetHorizontalHeaderItem(1, nameHeader);
             tableWidget.HorizontalHeader.StretchLastSection = true;
-            tableWidget.VerticalHeader.Hide();
+            tableWidget.VerticalHeader.Hide();            
             tableWidget.selectionBehavior = QAbstractItemView.SelectionBehavior.SelectRows;
             tableWidget.EditTriggers = QAbstractItemView.EditTrigger.NoEditTriggers;
 
@@ -65,14 +66,7 @@ namespace TableWidget
             vBox.AddWidget(tableWidget);
             vBox.AddItem(hBox1);
             vBox.AddItem(hBox2);
-
-            List<QTableWidgetItem> items = tableWidget.FindItems("Pro", MatchFlag.MatchStartsWith);
-
-            foreach(QTableWidgetItem item in items)
-            {
-                
-                
-            }
+          
         }
 
         private void OnWidgetKeyReleaseEvent(object sender, QEventArgs<QKeyEvent> evtArgs)
@@ -98,23 +92,25 @@ namespace TableWidget
         }
         
         private void PopulateTable()
-        {
-            var code = 1000;            
-            for (var i = 0; i < 1000; i++)
-            {
-                code++;                
-                tableWidget.InsertRow(i);
-
-                QTableWidgetItem codeItem = new QTableWidgetItem();
-                codeItem.Text = code.ToString();
-
-                QTableWidgetItem productItem = new QTableWidgetItem();
-                productItem.Text = "Product " + i.ToString();
-
-                tableWidget.SetItem(i, 0, codeItem);
-                tableWidget.SetItem(i, 1, productItem);
-            }
+        {   
             
+            using (var context = new SqliteContext() )
+            {
+                var products = from p in context.Products
+                               select p;
+
+                var i = 0;
+                foreach(var product in products)
+                {
+                    tableWidget.InsertRow(i);
+                    tableWidget.SetItem(i, 0, new QTableWidgetItem(product.Code));
+                    tableWidget.SetItem(i, 1, new QTableWidgetItem(product.Name));
+                    tableWidget.SetItem(i, 2, new QTableWidgetItem(product.Id.ToString()));                    
+
+                    i++;
+                }
+                               
+            }
         }
 
 
