@@ -65,7 +65,6 @@
     <Compile Include="MyWidget.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="SqliteContext.cs" />
-    <Compile Include="StringListModel.cs" />
     <Compile Include="TableModel.cs" />
   </ItemGroup>
   <ItemGroup>

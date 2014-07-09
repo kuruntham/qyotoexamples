@@ -9,31 +9,18 @@ using System.Data.SQLite.Linq;
 using QtCore;
 using QtGui;
 
-
-
 namespace AutoComplete
 {
     class TableModel:QAbstractTableModel
     {
-        private List<string> list;
-        private List<string> list1;
+        private List<Product> list = new List<Product>();        
 
         public TableModel(QObject parent = null):base(parent)
-        {
-            list = new List<string>();
-            list1 = new List<string>();
+        {  
             using (var context = new SqliteContext())
             {
-                var products = from p in context.Products
-                               select p;
-                
-                foreach (var product in products)
-                {
-                    list1.Add(product.Code);
-                    list.Add(product.Name);                  
-                }
-
-            }        
+                list = context.Products.ToList(); 
+            }            
             
         }
         
@@ -45,15 +32,15 @@ namespace AutoComplete
         public override object Data(QModelIndex index, int role = 0)
         {            
             if (role == (int)Qt.ItemDataRole.DisplayRole || role == (int)Qt.ItemDataRole.EditRole)
-            {
+            {             
                 
                 if (index.Column == 0)
                 {
-                    return list1[index.Row];
+                    return list[index.Row].Code;
                 }
                 else if(index.Column == 1)
                 {
-                    return list[index.Row];
+                    return list[index.Row].Name;
                 }
             }
 
@@ -69,5 +56,6 @@ namespace AutoComplete
         {
             return list.Count;
         }
+        
     }
 }

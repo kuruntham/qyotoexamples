@@ -32,7 +32,7 @@ namespace AutoComplete
             completer = new QCompleter(tableModel);
             completer.Popup = tableView;
             completer.CompletionColumn = 0;
-            completer.MaxVisibleItems = 5;            
+            //completer.MaxVisibleItems = 5;            
 
             tableView.HorizontalHeader.StretchLastSection = false;
             tableView.HorizontalHeader.Hide();
